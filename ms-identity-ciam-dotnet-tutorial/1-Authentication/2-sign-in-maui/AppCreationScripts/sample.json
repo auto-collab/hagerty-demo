@@ -1,0 +1,94 @@
+{
+    "Sample": {
+        "Title": "A .NET MAUI app using MSAL.NET to authenticate users with Azure AD for Customers",
+        "Level": 200,
+        "Client": "MAUI App",
+        "Description": "Sign in to a CIAM tenant using MAUI",
+        "Languages": [
+            "csharp"
+        ],
+        "Products": [
+            "msal-net",
+            "azure-active-directory"
+        ],
+        "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+        "Endpoint": "AAD v2.0",
+        "Provider": "CIAM"
+    },
+    "AADApps": [
+        {
+            "Id": "client",
+            "Name": "ciam-dotnet-maui",
+            "Kind": "Mobile",
+            "SampleSubPath": "1-Authentication\\2-sign-in-maui",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "Microsoft Graph",
+                    "DelegatedPermissions": [
+                        "openid",
+                        "offline_access"
+                    ]
+                }
+            ],
+            "SDK": "MsalNet",
+            "DefaultDesktopAndMobileRedirectUriSettings": {
+                "UsesDefaultMsalRedirectUri": true
+            },
+            "ManualSteps": [
+                {
+                    "Comment": "Navigate to your tenant and create user flows to allow users to sign up for the application."
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Tenant_Subdomain_Here",
+                    "value": "$tenantName"
+                },
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                }
+            ]
+        },
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\Platforms\\Android\\MsalActivity.cs",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                }
+            ]
+        },
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\Platforms\\Android\\AndroidManifest.xml",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                }
+            ]
+        },
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\Platforms\\iOS\\AppDelegate.cs",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                }
+            ]
+        }
+    ]
+}

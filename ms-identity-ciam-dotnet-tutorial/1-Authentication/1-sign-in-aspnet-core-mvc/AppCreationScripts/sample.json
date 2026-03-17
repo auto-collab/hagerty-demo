@@ -1,0 +1,66 @@
+{
+    "Sample": {
+        "Title": "An ASP.NET Core web app authenticating users against Microsoft Entra External ID using Microsoft Identity Web",
+        "Level": 100,
+        "Client": "ASP.NET Core web app",
+        "Languages": [
+            "csharp"
+        ],
+        "Products": [
+            "azure-active-directory",
+            "microsoft-identity-web"
+        ],
+        "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+        "Endpoint": "AAD v2.0",
+        "Provider": "CIAM"
+    },
+    "AADApps": [
+        {
+            "Id": "client",
+            "Name": "ciam-aspnet-webapp",
+            "Kind": "WebApp",
+            "Audience": "AzureADMyOrg",
+            "HomePage": "https://localhost:7274/",
+            "ReplyUrls": "https://localhost:7274/, https://localhost:7274/signin-oidc",
+            "LogoutUrl": "https://localhost:7274/signout-callback-oidc",
+            "PasswordCredentials": "Auto",
+            "SDK": "MicrosoftIdentityWeb",
+            "SampleSubPath": "1-Authentication\\1-sign-in-aspnet-core-mvc",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "Microsoft Graph",
+                    "DelegatedPermissions": [
+                        "openid",
+                        "offline_access"
+                    ]
+                }
+            ],
+            "ManualSteps": [
+                {
+                    "Comment": "Navigate to your tenant and create user flows to allow users to sign up for the application."
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                },
+                {
+                    "key": "Enter_the_Tenant_Subdomain_Here",
+                    "value": "$tenantName"
+                },
+                {
+                    "key": "Enter_the_Client_Secret_Here",
+                    "value": ".AppKey"
+                }
+            ]
+        }
+    ]
+}

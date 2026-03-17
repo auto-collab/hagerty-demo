@@ -1,0 +1,111 @@
+{
+    "Sample": {
+        "Title": "A .NET Core daemon application calling a custom Web API with its own identity using a CIAM tenant",
+        "Level": 200,
+        "Client": ".NET Core daemon app",
+        "Service": ".NET Core Web API",
+        "RepositoryUrl": "ms-identity-ciam-dotnet-tutorial",
+        "Endpoint": "AAD v2.0",
+        "Description": "This sample demonstrates a .NET Core daemon app calling a ASP.NET Core Web API that is secured using Azure AD for Customers.",
+        "Languages": [
+            "csharp"
+        ],
+        "Products": [
+            "azure-active-directory"
+        ],
+        "Platform": "DotNetCore",
+        "Provider": "CIAM"
+    },
+    "AADApps": [
+        {
+            "Id": "service",
+            "Name": "ciam-dotnet-api",
+            "Kind": "WebApi",
+            "Audience": "AzureADMyOrg",
+            "SDK": "MicrosoftIdentityWeb",
+            "HomePage": "https://localhost:44372",
+            "SampleSubPath": "2-Authorization\\3-call-own-api-dotnet-core-daemon\\ToDoListClient",
+            "Scopes": ["ToDoList.Read", "ToDoList.ReadWrite"],
+            "AppRoles": [
+                {
+                    "AllowedMemberTypes": ["Application"],
+                    "Name": "ToDoList.Read.All",
+                    "Description": "Allow this application to read every users TodoList items"
+                },
+                {
+                    "AllowedMemberTypes": ["Application"],
+                    "Name": "ToDoList.ReadWrite.All",
+                    "Description": "Allow this application to read and write every users TodoList items"
+                }
+            ]
+        },
+        {
+            "Id": "client",
+            "Name": "ciam-dotnet-daemon",
+            "Kind": "Daemon",
+            "Audience": "AzureADMyOrg",
+            "SDK": "MicrosoftIdentityWeb",
+            "PasswordCredentials": "Auto",
+            "UsesROPCOrIWA": false,
+            "SampleSubPath": "2-Authorization\\3-call-own-api-dotnet-core-daemon\\ToDoListApi",
+            "RequiredResourcesAccess": [
+                {
+                    "Resource": "service",
+                    "ApplicationPermissions": [
+                        "ToDoList.Read.All",
+                        "ToDoList.ReadWrite.All"
+                    ]
+                }
+            ],
+            "ManualSteps": [
+                {
+                    "Comment": "Navigate to the API permissions page and click on 'Grant admin consent for {tenant}'"
+                }
+            ]
+        }
+    ],
+    "CodeConfiguration": [
+        {
+            "App": "service",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\ToDoListApi\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "value": ".AppId"
+                },
+                {
+                    "key": "Enter_the_Tenant_Id_Here",
+                    "value": "$tenantId"
+                },
+                {
+                    "key": "Enter_the_Tenant_Subdomain_Here",
+                    "value": "$tenantName"
+                }
+            ]
+        },
+        {
+            "App": "client",
+            "SettingKind": "Replace",
+            "SettingFile": "\\..\\ToDoListClient\\appsettings.json",
+            "Mappings": [
+                {
+                    "key": "Enter_the_Application_Id_Here",
+                    "Value": ".AppId"
+                },
+                {
+                    "key": "Enter_the_Tenant_Subdomain_Here",
+                    "value": "$tenantName"
+                },
+                {
+                    "key": "Enter_the_Client_Secret_Here",
+                    "value": ".AppKey"
+                },
+                {
+                    "key": "Enter_the_Web_Api_Application_Id_Here",
+                    "value": "service.AppId"
+                }
+            ]
+        }
+    ]
+}

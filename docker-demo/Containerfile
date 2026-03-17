@@ -1,0 +1,24 @@
+FROM alpine:3.18
+
+# Install client and server dependencies in one layer
+RUN apk add --no-cache netcat-openbsd wget
+
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+WORKDIR /app
+
+# Controls WHO owns the file (user and group)
+COPY --chown=appuser:appgroup app/server.sh . 
+
+# Controls WHAT can be done with the file (read, write, execute)
+RUN chmod +x server.sh
+
+# Switches from root to our non-root user. 
+# Everything from this point runs as appuser
+USER appuser
+
+# Makes shell PID1. Allows for graceful shutdown by receiving messaged 
+# from SIGTERM
+ENTRYPOINT ["sh", "server.sh"]
+
+CMD []

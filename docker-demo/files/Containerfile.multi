@@ -1,0 +1,85 @@
+# =============================================================================
+# CONTAINERFILE.multi - Demonstrating Multi-Stage Builds
+# =============================================================================
+# Concepts demonstrated:
+#   - Multi-stage builds
+#   - Build stage vs runtime stage
+#   - Only copying what you need into the final image
+#
+# The problem this solves:
+#   If you install build tools (compilers, package managers, dev dependencies)
+#   in a single stage image, all of that tooling ships with your final image.
+#   It's bloated and a security risk - more tools = larger attack surface.
+#
+# The solution:
+#   Stage 1 (builder): Install everything needed to BUILD the app
+#   Stage 2 (runtime): Start fresh, copy only the final artifact
+#   Result: A tiny image with no build tools at all
+# =============================================================================
+
+
+# =============================================================================
+# STAGE 1: Builder
+# This stage has all the tools needed to prepare our application.
+# It will NOT be present in the final image.
+# =============================================================================
+FROM alpine:3.18 AS builder
+
+# Install build tools - these will NOT end up in the final image
+# In a real app this might be: gcc, npm, maven, gradle, cargo etc.
+RUN apk add --no-cache curl tar
+
+WORKDIR /build
+
+# Simulate a "build step" - in a real app this might be:
+#   npm run build, go build, mvn package etc.
+# We're just copying and preparing our shell scripts here.
+COPY app/server.sh .
+COPY app/client.sh .
+
+# Simulate build artifact preparation
+# In a real Go app this would produce a single binary
+RUN chmod +x server.sh client.sh && \
+    echo "Build complete. Artifacts ready." && \
+    ls -lah
+
+
+# =============================================================================
+# STAGE 2: Runtime image
+# Fresh start - none of stage 1's layers are included.
+# We only copy the final artifacts from the builder stage.
+# This image is what actually gets deployed and run.
+# =============================================================================
+FROM alpine:3.18
+
+# Only install what we need to RUN the app - not build it
+RUN apk add --no-cache netcat-openbsd wget && \
+    groupadd -r appgroup && \
+    useradd -r -g appgroup appuser
+
+WORKDIR /app
+
+# --from=builder copies ONLY the built artifacts from stage 1
+# None of stage 1's layers, tools, or intermediate files come with it
+COPY --from=builder --chown=appuser:appgroup /build/server.sh .
+COPY --from=builder --chown=appuser:appgroup /build/client.sh .
+
+USER appuser
+
+ENTRYPOINT ["sh", "server.sh"]
+CMD []
+
+# =============================================================================
+# To see the size difference, build both and compare:
+#
+#   Single stage (hypothetical with build tools):
+#   docker build -f Containerfile.bloated -t demo:bloated .
+#   docker image ls demo:bloated
+#
+#   Multi stage:
+#   docker build -f Containerfile.multi -t demo:multi .
+#   docker image ls demo:multi
+#
+# In real apps (e.g. Go, Java, Node) this difference can be
+# hundreds of megabytes vs tens of megabytes.
+# =============================================================================

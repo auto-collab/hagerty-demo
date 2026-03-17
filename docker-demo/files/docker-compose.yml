@@ -1,0 +1,111 @@
+# =============================================================================
+# docker-compose.yml - Demonstrating Container Networking & Resource Limits
+# =============================================================================
+# Concepts demonstrated:
+#   - Multiple containers running together
+#   - Container networking - containers talk to each other by SERVICE NAME
+#     not by IP address. Docker's internal DNS resolves "api" to the
+#     API container's IP automatically.
+#   - cgroups via resource limits (mem_limit, cpus)
+#   - Environment variable injection
+#   - depends_on for startup ordering
+# =============================================================================
+
+version: "3.8"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # API Container
+  # This container runs our server.sh script and listens on port 8080.
+  # It is reachable by other containers in the same network via the
+  # service name "api" - Docker's internal DNS handles the resolution.
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: demo-api
+
+    # Environment variables injected into the container at runtime
+    # Our server.sh reads PORT to know what to listen on
+    environment:
+      - PORT=8080
+
+    # Expose port 8080 to the host machine so we can also call it manually:
+    #   curl http://localhost:8080
+    ports:
+      - "8080:8080"
+
+    # cgroups - resource limits enforced by the Linux kernel
+    # The container process CANNOT exceed these regardless of what it tries
+    deploy:
+      resources:
+        limits:
+          memory: 64m      # max 64mb RAM
+          cpus: "0.5"      # max 0.5 CPU cores
+
+    # Connect to our shared network
+    networks:
+      - demo-network
+
+    # Restart policy - if the process dies, restart it automatically
+    restart: unless-stopped
+
+
+  # ---------------------------------------------------------------------------
+  # Client Container
+  # This container runs client.sh which calls the API container.
+  # It reaches the API by service name "api" - NOT by IP address.
+  # Docker's internal DNS resolves "api" -> API container's IP automatically.
+  # This is container networking in action.
+  # ---------------------------------------------------------------------------
+  client:
+    build:
+      context: .
+      dockerfile: Containerfile
+      args:
+        - SCRIPT=client.sh
+
+    # Override the default ENTRYPOINT/CMD to run client.sh instead
+    # This demonstrates CMD/ENTRYPOINT override at runtime
+    entrypoint: ["sh", "client.sh"]
+
+    container_name: demo-client
+
+    environment:
+      - API_HOST=api       # This resolves via Docker's internal DNS
+      - API_PORT=8080
+      - INTERVAL=3         # Call the API every 3 seconds
+
+    # cgroups resource limits for the client too
+    deploy:
+      resources:
+        limits:
+          memory: 32m
+          cpus: "0.25"
+
+    networks:
+      - demo-network
+
+    # Wait for the API container to start first
+    depends_on:
+      - api
+
+    restart: unless-stopped
+
+
+# =============================================================================
+# Networks
+# By defining a network here, both containers are placed on the same
+# virtual network. Docker creates an internal DNS server for this network
+# that resolves service names to container IPs automatically.
+#
+# Containers on DIFFERENT networks cannot reach each other by default -
+# this is network namespace isolation in action.
+# =============================================================================
+networks:
+  demo-network:
+    driver: bridge
+    # Bridge network = Docker creates a virtual switch that connects
+    # containers to each other and to the host via a virtual interface (docker0)
