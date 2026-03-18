@@ -3,12 +3,13 @@ FROM alpine:3.18
 # Install client and server dependencies in one layer
 RUN apk add --no-cache netcat-openbsd wget
 
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN addgroup -S appgroup && adduser -S -G appgroup appuser
 
 WORKDIR /app
 
 # Controls WHO owns the file (user and group)
 COPY --chown=appuser:appgroup app/server.sh . 
+COPY --chown=appuser:appgroup app/client.sh . 
 
 # Controls WHAT can be done with the file (read, write, execute)
 RUN chmod +x server.sh
