@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "SSO Demo";
+}
+
+<div style="font-family: sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px;">
+
+    <h1>Welcome, @ViewBag.UserName</h1>
+    <p style="color: gray;">Object ID: @ViewBag.ObjectId</p>
+
+    <hr />
+
+    <h2>JWT Claims</h2>
+    <p style="color: gray; font-size: 0.85em;">
+        These came directly from HttpContext.User.Claims — populated by the OIDC middleware when you logged in.
+    </p>
+    <table border="1" cellpadding="6" cellspacing="0" style="width:100%; border-collapse: collapse;">
+        <thead style="background:#f0f0f0;">
+        <tr>
+            <th style="text-align:left;">Claim Type</th>
+            <th style="text-align:left;">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var claim in ViewBag.Claims)
+        {
+            <tr>
+                <td style="font-family: monospace;">@claim.Type</td>
+                <td style="font-family: monospace; word-break: break-all;">@claim.Value</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <h2>Access Token (scoped for TodoListApi)</h2>
+    <p style="color: gray; font-size: 0.85em;">
+        This token was acquired by ITokenAcquisition and will be sent as the Bearer token to the API.
+        Paste it into jwt.ms to inspect it.
+    </p>
+    <textarea rows="4" style="width:100%; font-family: monospace; font-size: 0.8em;">@ViewBag.AccessToken</textarea>
+
+    <hr />
+
+    <h2>TodoList API Response</h2>
+    <p style="color: gray; font-size: 0.85em;">
+        Result of GET /api/todolist — called with the token above.
+    </p>
+    <pre style="background:#f8f8f8; padding: 16px; border: 1px solid #ddd; overflow-x: auto;">@ViewBag.TodoItems</pre>
+
+</div>
