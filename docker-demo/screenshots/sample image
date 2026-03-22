@@ -1,0 +1,63 @@
+[
+    {
+        "Id": "sha256:6ff9d879011ad6e186ffd2ed23ce16b0363c5834ac7f68b44b642feeadb70460",
+        "RepoTags": [
+            "mcr.microsoft.com/dotnet/samples:aspnetapp"
+        ],
+        "RepoDigests": [
+            "mcr.microsoft.com/dotnet/samples@sha256:6ff9d879011ad6e186ffd2ed23ce16b0363c5834ac7f68b44b642feeadb70460"
+        ],
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-03-11T00:33:29.517564009Z",
+        "Config": {
+            "User": "1654",
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "APP_UID=1654",
+                "ASPNETCORE_HTTP_PORTS=8080",
+                "DOTNET_RUNNING_IN_CONTAINER=true",
+                "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true",
+                "DOTNET_VERSION=10.0.4",
+                "ASPNET_VERSION=10.0.4"
+            ],
+            "Entrypoint": [
+                "./aspnetapp"
+            ],
+            "WorkingDir": "/app"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 59814449,
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:989e799e634906e94dc9a5ee2ee26fc92ad260522990f26e707861a5f52bf64e",
+                "sha256:24ec146d3d9be59a6ff8162ed283919c072c821781a8aeec710c557204c30acc",
+                "sha256:c0b2053aead8ed370c49c552d74e0f8348368d6792c1f7a56e8fe790d2f0efe8",
+                "sha256:67d66be2cdc8fe9098a8b4b76babc4f6ea5cca2371cc408597b93b91308292b3",
+                "sha256:d0d809e7e10b44fc9ddca5b946139a399aed86a90ced08a9f5bf3009fa92b483",
+                "sha256:1db4d01ed4f067a1ece06b7b31a1a184d6f79f3b0ca0fb9524e820b846d7cadd",
+                "sha256:a39e53b2fbea9c591e3d194eb28c571cf8fe78097fabe906d2320f477e82271f",
+                "sha256:8f45c5fd21e24eb885cc0e095367e815e195eb44d4afeeccac5a392330d3b48b"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-03-11T19:44:27.7225444Z"
+        },
+        "Descriptor": {
+            "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+            "digest": "sha256:6ff9d879011ad6e186ffd2ed23ce16b0363c5834ac7f68b44b642feeadb70460",
+            "size": 1435
+        },
+        "Identity": {
+            "Pull": [
+                {
+                    "Repository": "mcr.microsoft.com/dotnet/samples"
+                }
+            ]
+        }
+    }
+]
